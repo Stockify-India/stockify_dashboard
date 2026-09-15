@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +13,11 @@ import {
 } from "@/components/ui/sidebar"
 import { CirclePlusIcon, MailIcon } from "lucide-react"
 
+function isItemActive(url: string, pathname: string) {
+  if (url === "/dashboard" && pathname === "/") return true
+  return pathname === url || pathname.startsWith(`${url}/`)
+}
+
 export function NavMain({
   items,
 }: {
@@ -21,6 +27,7 @@ export function NavMain({
     icon?: React.ReactNode
   }[]
 }) {
+  const pathname = usePathname()
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -50,6 +57,7 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 tooltip={item.title}
+                isActive={isItemActive(item.url, pathname)}
                 render={<Link href={item.url} />}
               >
                 {item.icon}
