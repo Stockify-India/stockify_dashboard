@@ -1,0 +1,17 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Local-only agent tool settings (machine-specific, not shared)
+.claude/settings.local.json
+.impeccable/config.local.json
+
+# Compiled platform binaries bundled with the "impeccable" skill
+# (downloaded/rebuilt locally by the skill launcher script; not portable)
+.agents/skills/impeccable/scripts/bin/
+.claude/skills/impeccable/scripts/bin/
