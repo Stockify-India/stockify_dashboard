@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon,Building2Icon, GitCompareIcon, MessageCircleIcon, CalculatorIcon,UserRoundIcon } from "lucide-react"
+import { LayoutDashboardIcon, ChartBarIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon,Building2Icon, GitCompareIcon, MessageCircleIcon, CalculatorIcon,UserRoundIcon } from "lucide-react"
 
 const data = {
   user: {
