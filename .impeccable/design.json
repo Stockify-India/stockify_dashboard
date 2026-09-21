@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-18T15:23:11Z",
+  "title": "Design System: Stockify",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": ["oklch(0.15 0 0)", "oklch(0.25 0 0)", "oklch(0.35 0 0)", "oklch(0.45 0 0)", "oklch(0.56 0 0)", "oklch(0.7 0 0)", "oklch(0.85 0 0)", "oklch(1 0 0)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.145 0 0)",
+        "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.25 0 0)", "oklch(0.35 0 0)", "oklch(0.45 0 0)", "oklch(0.556 0 0)", "oklch(0.7 0 0)", "oklch(0.85 0 0)", "oklch(0.97 0 0)"]
+      },
+      "graphite": {
+        "role": "primary",
+        "displayName": "Graphite",
+        "canonical": "oklch(0.205 0 0)",
+        "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.3 0 0)", "oklch(0.4 0 0)", "oklch(0.5 0 0)", "oklch(0.65 0 0)", "oklch(0.8 0 0)", "oklch(0.92 0 0)"]
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "oklch(0.97 0 0)",
+        "tonalRamp": ["oklch(0.2 0 0)", "oklch(0.35 0 0)", "oklch(0.5 0 0)", "oklch(0.65 0 0)", "oklch(0.8 0 0)", "oklch(0.9 0 0)", "oklch(0.95 0 0)", "oklch(0.97 0 0)"]
+      },
+      "slate": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "oklch(0.556 0 0)",
+        "tonalRamp": ["oklch(0.2 0 0)", "oklch(0.3 0 0)", "oklch(0.4 0 0)", "oklch(0.48 0 0)", "oklch(0.556 0 0)", "oklch(0.65 0 0)", "oklch(0.78 0 0)", "oklch(0.9 0 0)"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.922 0 0)",
+        "tonalRamp": ["oklch(0.5 0 0)", "oklch(0.65 0 0)", "oklch(0.78 0 0)", "oklch(0.85 0 0)", "oklch(0.9 0 0)", "oklch(0.922 0 0)", "oklch(0.95 0 0)", "oklch(0.98 0 0)"]
+      },
+      "focus-ring": {
+        "role": "neutral",
+        "displayName": "Focus Ring",
+        "canonical": "oklch(0.708 0 0)",
+        "tonalRamp": ["oklch(0.4 0 0)", "oklch(0.5 0 0)", "oklch(0.6 0 0)", "oklch(0.65 0 0)", "oklch(0.708 0 0)", "oklch(0.8 0 0)", "oklch(0.88 0 0)", "oklch(0.95 0 0)"]
+      },
+      "alert": {
+        "role": "neutral",
+        "displayName": "Alert",
+        "canonical": "oklch(0.577 0.245 27.325)",
+        "tonalRamp": ["oklch(0.25 0.14 27)", "oklch(0.35 0.17 27)", "oklch(0.45 0.2 27)", "oklch(0.52 0.23 27)", "oklch(0.577 0.245 27.325)", "oklch(0.65 0.2 27)", "oklch(0.78 0.14 27)", "oklch(0.9 0.06 27)"],
+        "note": "Shadcn default destructive red. Confirmed as a token; not yet used anywhere in shipped product UI beyond form aria-invalid states."
+      },
+      "confirmation-green": {
+        "role": "primary",
+        "displayName": "Confirmation Green",
+        "canonical": "#10b981",
+        "tonalRamp": ["#022c22", "#064e3b", "#047857", "#059669", "#10b981", "#34d399", "#6ee7b7", "#d1fae5"],
+        "note": "Tailwind emerald-950..emerald-100 stops (dark to light). #34d399 (emerald-400) is the dark-mode value the app actually uses in place of #10b981."
+      },
+      "signal-sky": {
+        "role": "secondary",
+        "displayName": "Signal Sky",
+        "canonical": "#0ea5e9",
+        "tonalRamp": ["oklch(0.25 0.1 230)", "oklch(0.35 0.13 230)", "oklch(0.45 0.15 230)", "oklch(0.55 0.17 230)", "oklch(0.65 0.19 230)", "oklch(0.75 0.15 230)", "oklch(0.85 0.1 230)", "oklch(0.93 0.05 230)"],
+        "note": "Chart-only series color, synthesized ramp in OKLCH. Never used in UI chrome."
+      },
+      "signal-violet": {
+        "role": "tertiary",
+        "displayName": "Signal Violet",
+        "canonical": "#8b5cf6",
+        "tonalRamp": ["oklch(0.25 0.12 290)", "oklch(0.35 0.16 290)", "oklch(0.45 0.2 290)", "oklch(0.55 0.24 290)", "oklch(0.65 0.24 290)", "oklch(0.75 0.18 290)", "oklch(0.85 0.12 290)", "oklch(0.93 0.06 290)"],
+        "note": "Chart-only series color, synthesized ramp in OKLCH. Never used in UI chrome."
+      },
+      "signal-amber": {
+        "role": "tertiary",
+        "displayName": "Signal Amber",
+        "canonical": "#f59e0b",
+        "tonalRamp": ["oklch(0.25 0.08 70)", "oklch(0.35 0.12 70)", "oklch(0.5 0.15 70)", "oklch(0.62 0.17 70)", "oklch(0.72 0.17 70)", "oklch(0.8 0.14 70)", "oklch(0.88 0.09 70)", "oklch(0.95 0.04 70)"],
+        "note": "Also the Insight Note background tint (at 10% opacity) and text color (amber-700 / amber-400)."
+      },
+      "signal-rose": {
+        "role": "tertiary",
+        "displayName": "Signal Rose",
+        "canonical": "#f43f5e",
+        "tonalRamp": ["oklch(0.25 0.1 15)", "oklch(0.35 0.14 15)", "oklch(0.45 0.18 15)", "oklch(0.55 0.22 15)", "oklch(0.63 0.22 15)", "oklch(0.73 0.17 15)", "oklch(0.84 0.1 15)", "oklch(0.93 0.05 15)"],
+        "note": "Chart-only negative/warning series and the low end of the Range Bar gradient."
+      }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline", "purpose": "The single featured metric in a bento tile (ROCE, EPS, latest close) — the largest text on any screen." },
+      "title": { "displayName": "Title", "purpose": "Card and chart titles." },
+      "body": { "displayName": "Body", "purpose": "Default text: table cells, tile values, paragraph copy." },
+      "label": { "displayName": "Label", "purpose": "Muted captions: tile labels, chart subtitles." },
+      "mono-label": { "displayName": "Mono Label", "purpose": "Statement-table period/date headers and chart axis ticks — signals machine-sourced data (the Ledger Header Rule)." }
+    },
+    "shadows": [
+      { "name": "scroll-continuation-edge", "value": "6px 0 8px -6px rgba(0,0,0,0.12)", "purpose": "Right edge of a sticky table column, signaling more content scrolls underneath. Dark mode: rgba(0,0,0,0.5)." },
+      { "name": "active-tab", "value": "0 1px 2px 0 rgba(0,0,0,0.05)", "purpose": "shadcn's default shadow-sm, applied to the selected tab in the default (non-line) tabs variant." }
+    ],
+    "motion": [
+      { "name": "tab-underline-spring", "value": "spring(stiffness: 100, damping: 20)", "purpose": "The shared layoutId underline sliding between active tabs in the Company Analysis nav." },
+      { "name": "sidebar-nav-spring", "value": "spring(stiffness: 420, damping: 32)", "purpose": "Sidebar nav items sliding/fading in on load, staggered ~40ms apart." },
+      { "name": "number-tick-ease", "value": "cubic-bezier(0.16, 1, 0.3, 1), duration 0.8s", "purpose": "AnimatedNumber/AnimatedRange ticking from the previous reading to the new one." },
+      { "name": "panel-reveal-fade", "value": "ease-out, duration 0.15s, opacity 0→1", "purpose": "Tab panel content fade-in on tab switch — deliberately quiet, no spatial movement." },
+      { "name": "refresh-sweep", "value": "translateX(-100%) → translateX(350%), 1.1s ease-in-out infinite", "purpose": "Emerald sweep bar under the tab list while a company switch is loading. Gated by prefers-reduced-motion at the CSS keyframe level." },
+      { "name": "stagger-row-fade", "value": "fade-in + slide-in-from-bottom(4px), 300ms, fill-mode-backwards, 40ms stagger per row", "purpose": "Statement table and metric tile row/entrance animation." },
+      { "name": "range-bar-draw-in", "value": "scaleX 0→1, transform-origin left", "purpose": "The 52-week range bar's fill drawing in on mount." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Highest-emphasis action. Graphite fill, never the emerald accent.",
+      "html": "<button class=\"ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; height: 2rem; padding: 0 0.625rem; border-radius: 0.625rem; border: 1px solid transparent; background: oklch(0.205 0 0); color: oklch(0.985 0 0); font-size: 0.875rem; font-weight: 500; font-family: Geist, ui-sans-serif, system-ui; transition: background 0.15s, transform 0.1s; } .ds-btn-primary:hover { background: color-mix(in oklch, oklch(0.205 0 0), transparent 20%); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.708 0 0 / 50%); border-color: oklch(0.708 0 0); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Chart Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Signature wrapper for every trend/comparison chart — title, muted subtitle, optional single action (e.g. a two-state toggle).",
+      "html": "<div class=\"ds-chart-card\"><div class=\"ds-chart-card-head\"><div><p class=\"ds-chart-card-title\">Net profit margin trend</p><p class=\"ds-chart-card-sub\">Net profit ÷ revenue, by quarter</p></div></div><div class=\"ds-chart-card-body\">Chart renders here</div></div>",
+      "css": ".ds-chart-card { border-radius: 1.125rem; background: oklch(1 0 0); border: 1px solid oklch(0.922 0 0); padding: 1rem; } .ds-chart-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.75rem; } .ds-chart-card-title { font-size: 0.875rem; font-weight: 500; color: oklch(0.145 0 0); font-family: Geist, ui-sans-serif, system-ui; margin: 0; } .ds-chart-card-sub { font-size: 0.75rem; color: oklch(0.556 0 0); margin: 0; }"
+    },
+    {
+      "name": "Metric Bento Featured Tile",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "The 2×2 emerald-tinted highlight tile inside a metric bento grid — carries the one headline-scale number on screen.",
+      "html": "<div class=\"ds-bento-featured\"><span class=\"ds-bento-featured-label\">ROCE</span><span class=\"ds-bento-featured-value\">18.4%</span></div>",
+      "css": ".ds-bento-featured { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; border-radius: 1.125rem; padding: 1rem 1.25rem; border: 1px solid color-mix(in oklch, #10b981, transparent 80%); background: color-mix(in oklch, #10b981, transparent 95%); } .ds-bento-featured-label { font-size: 0.75rem; font-weight: 500; color: #047857; } .ds-bento-featured-value { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; color: oklch(0.145 0 0); font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Insight Note",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Amber-tinted flag beneath a chart. Renders only when the data genuinely satisfies the condition it's reporting — never a static message.",
+      "html": "<p class=\"ds-insight-note\">DII holding overtook FII holding for the first time in this window in Jun 2025.</p>",
+      "css": ".ds-insight-note { margin-top: 0.75rem; border-radius: 0.5rem; padding: 0.5rem 0.75rem; background: color-mix(in oklch, #f59e0b, transparent 90%); color: #b45309; font-size: 0.75rem; line-height: 1.4; }"
+    },
+    {
+      "name": "Range Bar",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "52-week low→high price range. Gradient track, fill draws in on mount via scaleX.",
+      "html": "<div class=\"ds-range-bar\"><div class=\"ds-range-bar-fill\"></div></div>",
+      "css": ".ds-range-bar { height: 0.5rem; width: 100%; overflow: hidden; border-radius: 9999px; background: oklch(0.97 0 0); } .ds-range-bar-fill { height: 100%; width: 100%; border-radius: 9999px; transform-origin: left; background: linear-gradient(to right, color-mix(in oklch, #f43f5e, transparent 70%), oklch(0.97 0 0), color-mix(in oklch, #10b981, transparent 60%)); }"
+    },
+    {
+      "name": "Line Tab (active)",
+      "kind": "nav",
+      "refersTo": "tabs-trigger-active",
+      "description": "Main Company Analysis section nav. Active label turns Confirmation Green; the underline is a separate shared element that springs between tabs.",
+      "html": "<div class=\"ds-tabs-line\"><button class=\"ds-tab ds-tab-active\">Quarters<span class=\"ds-tab-underline\"></span></button><button class=\"ds-tab\">Profit &amp; Loss</button></div>",
+      "css": ".ds-tabs-line { display: inline-flex; gap: 0.25rem; align-items: center; } .ds-tab { position: relative; display: inline-flex; align-items: center; padding: 0.125rem 0.375rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: color-mix(in oklch, oklch(0.145 0 0), transparent 40%); background: transparent; border: none; transition: color 0.15s; } .ds-tab:hover { color: oklch(0.145 0 0); } .ds-tab-active { color: #059669; } .ds-tab-underline { position: absolute; inset-inline: 0.375rem; bottom: -8px; height: 2px; border-radius: 9999px; background: #10b981; }"
+    },
+    {
+      "name": "Secondary Badge",
+      "kind": "chip",
+      "refersTo": "badge-secondary",
+      "description": "Small inline metadata chip, e.g. the \"Recent trades\" info badge on the Shareholding chart — paired with a tooltip for anything needing more explanation.",
+      "html": "<span class=\"ds-badge\"><svg class=\"ds-badge-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4M12 8h.01\"/></svg>Recent trades</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 0.25rem; height: 1.25rem; padding: 0.125rem 0.5rem; border-radius: 1.625rem; background: oklch(0.97 0 0); color: oklch(0.205 0 0); font-size: 0.6875rem; font-weight: 500; white-space: nowrap; } .ds-badge-icon { width: 0.75rem; height: 0.75rem; flex-shrink: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Signal Room",
+    "overview": "Stockify's interface is deliberately quiet so that when it actually has something to say, it's unmistakable. The chrome is pure shadcn neutral — oklch grayscale, zero chroma, no brand color anywhere in the shell — and exactly one hue, emerald, is allowed to mean anything: \"this is real, this is confirmed, look here.\" That single color does three jobs at once — the active tab, the live-refresh sweep, and the positive series in every chart — and never a fourth. Everything else (an amber-tinted insight note, a chart's muted qualitative palette) exists to flag something the underlying data actually proved true, never to decorate.\n\nThe voice is dense and technical, explicitly not a consumer fintech app: no rounded illustration blobs, no marketing whitespace, no gradient hero moments. It reads closer to a terminal or a ledger than an app — Geist Mono renders every statement-table period header as if it were stamped from a machine feed, while Geist Sans carries the numbers themselves so they stay comfortable to actually read. Depth is almost entirely absent: surfaces are separated by 1px hairline rings, not shadows, and the few real box-shadows that exist are working parts rather than atmosphere.",
+    "keyCharacteristics": [
+      "One accent (emerald / Confirmation Green), used for confirmation and live state only — never decoration.",
+      "Monospace for machine-sourced labels (dates, periods), humanist sans for the numbers meant to be read.",
+      "Flat, ring-bordered surfaces; shadow is functional, never ambient.",
+      "A separate, muted five-color qualitative palette exists solely for chart series and never leaks into UI chrome.",
+      "Motion is restrained and purposeful: numbers tick instead of pop, panels fade instead of slide, and the one continuous animation (the refresh sweep) exists only while data is actually stale."
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Emerald means \"confirmed/live/positive\" and nothing else, in chrome or in charts. If a new chart needs a \"this is the good line\" color, it's this green — never invent a second meaning for it, and never use it for something neutral just because it's the brand color.", "section": "colors" },
+      { "name": "The Real Palette Rule", "body": "globals.css still defines --chart-1 through --chart-5 as shadcn's default 0-chroma grayscale scaffolding — nothing in the product actually uses them. The real, chosen chart palette is the five exported hex constants (EMERALD/SKY/AMBER/ROSE/VIOLET) in company-charts.tsx. Don't reach for the CSS variables when adding a new chart.", "section": "colors" },
+      { "name": "The Ledger Header Rule", "body": "Any header that names a time period or filing date renders in Geist Mono. The data itself stays in Geist Sans with tabular-nums so it's comfortable to actually read.", "section": "typography" },
+      { "name": "The Flat Ledger Rule", "body": "Depth is earned, not decorative. Cards and containers are separated by a 1px hairline ring, not a shadow. Every real box-shadow in the system signals a specific interaction state or scroll affordance, never atmosphere.", "section": "elevation" },
+      { "name": "The Two-Tier Radius Rule", "body": "Interactive controls sit tight (8-10px); containers sit loose (14-18px, badges fully pill at 26px). Never swap the two.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do keep emerald to exactly one meaning (confirmed/live/positive) across chrome and charts — the One Signal Rule.",
+      "Do render statement-table and chart-axis period/date labels in Geist Mono, and the numbers themselves in Geist Sans with tabular-nums — the Ledger Header Rule.",
+      "Do make an Insight Note's appearance conditional on a real, computed fact about the data on screen; never ship one that always renders.",
+      "Do use the opaque-background + edge-shadow pattern for any new sticky table column; a translucent sticky background will ghost.",
+      "Do keep new wide elements contained by their own card's horizontal scroll — never let one drag the sidebar or page sideways."
+    ],
+    "donts": [
+      "Don't use the scaffolded --chart-1...--chart-5 CSS variables for a new chart — they're unused grayscale placeholders. Use the real EMERALD/SKY/AMBER/ROSE/VIOLET constants.",
+      "Don't add a decorative/ambient box-shadow anywhere — every shadow in this system does a specific job.",
+      "Don't give a button or badge a card-sized radius, or a card a button-sized radius.",
+      "Don't phrase an auto-generated insight as a recommendation or prediction — this content must read as observation, not advice.",
+      "Don't reach for a second accent color for \"this also matters\" — a second UI-chrome accent would break the One Signal Rule."
+    ]
+  }
+}

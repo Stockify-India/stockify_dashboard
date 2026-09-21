@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +13,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { CirclePlusIcon, MailIcon } from "lucide-react"
+
+const SPRING = { type: "spring", stiffness: 420, damping: 32 } as const
 
 function isItemActive(url: string, pathname: string) {
   if (url === "/dashboard" && pathname === "/") return true
@@ -43,7 +46,7 @@ export function NavMain({
 
             <Button
               size="icon"
-              className="size-8 group-data-[collapsible=icon]:opacity-0"
+              className="size-8 transition-transform group-data-[collapsible=icon]:opacity-0 active:scale-[0.95]"
               variant="outline"
             >
               <MailIcon />
@@ -53,18 +56,36 @@ export function NavMain({
         </SidebarMenu>
 
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                tooltip={item.title}
-                isActive={isItemActive(item.url, pathname)}
-                render={<Link href={item.url} />}
+          {items.map((item, index) => {
+            const active = isItemActive(item.url, pathname)
+            return (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ ...SPRING, delay: index * 0.04 }}
               >
-                {item.icon}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                <SidebarMenuItem className="relative">
+                  {active && (
+                    <motion.span
+                      layoutId="nav-main-active"
+                      className="absolute inset-0 rounded-md bg-sidebar-accent"
+                      transition={SPRING}
+                    />
+                  )}
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    isActive={active}
+                    render={<Link href={item.url} />}
+                    className="relative data-active:bg-transparent! [&_svg]:transition-transform [&_svg]:duration-200 group-hover/menu-button:[&_svg]:translate-x-0.5"
+                  >
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </motion.div>
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

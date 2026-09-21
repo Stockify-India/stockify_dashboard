@@ -127,3 +127,14 @@
     @apply font-sans;
     }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes refresh-sweep {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(350%);
+    }
+  }
+}
