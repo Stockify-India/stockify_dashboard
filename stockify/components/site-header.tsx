@@ -32,24 +32,24 @@ export function SiteHeader() {
   const { companies, selectedCompany, setSelectedCompany } = useCompany()
 
   return (
-    <header className="relative z-20 flex h-(--header-height) shrink-0 items-center gap-2 border-b bg-background transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-      <div className="relative flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+    <header className="relative z-20 flex shrink-0 flex-col border-b bg-background transition-[height] ease-linear sm:h-(--header-height) sm:flex-row sm:items-center group-has-data-[collapsible=icon]/sidebar-wrapper:sm:h-(--header-height)">
+      <div className="flex h-(--header-height) w-full shrink-0 items-center gap-1 px-4 lg:gap-2 lg:px-6">
         <SidebarTrigger className="-ml-1" />
         <Separator
           orientation="vertical"
           className="mx-2 h-4 data-vertical:self-auto"
         />
-        <h1 className="text-base font-medium">{titleForPathname(pathname)}</h1>
-        {isCompanyAnalysis && selectedCompany && (
-          <div className="absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center">
-            <CompanySearch
-              companies={companies}
-              selected={selectedCompany}
-              onSelect={setSelectedCompany}
-            />
-          </div>
-        )}
+        <h1 className="min-w-0 truncate text-base font-medium">{titleForPathname(pathname)}</h1>
       </div>
+      {isCompanyAnalysis && selectedCompany && (
+        <div className="w-full px-4 pb-3 sm:absolute sm:inset-y-0 sm:left-1/2 sm:flex sm:w-auto sm:-translate-x-1/2 sm:items-center sm:px-0 sm:pb-0">
+          <CompanySearch
+            companies={companies}
+            selected={selectedCompany}
+            onSelect={setSelectedCompany}
+          />
+        </div>
+      )}
     </header>
   )
 }

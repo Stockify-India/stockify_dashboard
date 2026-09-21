@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { CirclePlusIcon, MailIcon } from "lucide-react"
 
@@ -31,6 +32,7 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
+  const { isMobile, setOpenMobile } = useSidebar()
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -77,6 +79,9 @@ export function NavMain({
                     tooltip={item.title}
                     isActive={active}
                     render={<Link href={item.url} />}
+                    onClick={() => {
+                      if (isMobile) setOpenMobile(false)
+                    }}
                     className="relative data-active:bg-transparent! [&_svg]:transition-transform [&_svg]:duration-200 group-hover/menu-button:[&_svg]:translate-x-0.5"
                   >
                     {item.icon}

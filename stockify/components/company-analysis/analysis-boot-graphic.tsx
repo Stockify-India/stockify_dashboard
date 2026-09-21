@@ -32,11 +32,11 @@ const TAB_WIDTHS = [
  * nothing jumps once data lands, cascading in with the same 40ms-per-row
  * stagger the statement table uses for "new data arrived."
  *
- * The one moving element is the emerald sweep bar under the tab row - the
- * same signal company-tab-nav's `isRefreshing` cue uses for "a real fetch
- * is in flight." A cold boot is that same fact, so it earns the same cue
- * rather than a second one (the One Signal Rule: emerald means confirmed/
- * live and nothing else).
+ * The one moving element is the sweep bar under the tab row - the same
+ * signal company-tab-nav's `isRefreshing` cue uses for "a real fetch is
+ * in flight." A cold boot is that same fact, so it earns the same cue
+ * rather than a second one (the One Signal Rule: this sweep means
+ * confirmed/live and nothing else).
  */
 export function AnalysisBootGraphic() {
   return (
@@ -57,9 +57,9 @@ export function AnalysisBootGraphic() {
         </div>
         <div
           aria-hidden
-          className="absolute inset-x-0 -bottom-px h-0.5 overflow-hidden bg-emerald-500/10"
+          className="absolute inset-x-0 -bottom-px h-0.5 overflow-hidden bg-foreground/10"
         >
-          <div className="h-full w-1/3 bg-emerald-500 motion-safe:animate-[refresh-sweep_1.1s_ease-in-out_infinite] dark:bg-emerald-400" />
+          <div className="h-full w-1/3 bg-foreground motion-safe:animate-[refresh-sweep_1.1s_ease-in-out_infinite]" />
         </div>
       </div>
 
@@ -67,13 +67,13 @@ export function AnalysisBootGraphic() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:[grid-auto-flow:dense]">
           <div
             className={cn(
-              "col-span-2 row-span-2 flex flex-col justify-between gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-4 dark:border-emerald-400/20 dark:bg-emerald-400/5",
+              "col-span-2 row-span-2 flex flex-col justify-between gap-3 rounded-2xl bg-foreground/[0.03] px-5 py-4 dark:bg-foreground/[0.06]",
               STAGGER_ITEM
             )}
             style={staggerDelay(0)}
           >
-            <Skeleton className="h-3 w-20 rounded bg-emerald-500/15 dark:bg-emerald-400/15" />
-            <Skeleton className="h-7 w-28 rounded bg-emerald-500/15 dark:bg-emerald-400/15" />
+            <Skeleton className="h-3 w-20 rounded bg-foreground/10" />
+            <Skeleton className="h-7 w-28 rounded bg-foreground/10" />
           </div>
           {[1, 2, 3, 4].map((i) => (
             <div
