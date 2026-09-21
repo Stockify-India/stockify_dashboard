@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useCompanyAnalysis, type CompanyAnalysisData } from "@/components/company-analysis/use-company-analysis"
@@ -136,32 +137,36 @@ function MetricBento({
 }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:[grid-auto-flow:dense]">
-      <div className="relative col-span-2 row-span-2 flex flex-col justify-between overflow-hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-4 dark:border-emerald-400/20 dark:bg-emerald-400/5">
-        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
-          {highlight.label}
-        </span>
-        <div>
-          <MetricValueDisplay
-            value={highlight.value}
-            className="text-2xl font-semibold tracking-tight text-foreground tabular-nums"
-          />
-          {highlight.sub && (
-            <p className="mt-1 text-xs text-muted-foreground">{highlight.sub}</p>
-          )}
-        </div>
-      </div>
+      <Card className="col-span-2 row-span-2 h-full rounded-2xl bg-foreground/[0.03] dark:bg-foreground/[0.06]">
+        <CardContent className="flex h-full flex-col justify-between gap-3">
+          <span className="text-xs font-medium text-muted-foreground">
+            {highlight.label}
+          </span>
+          <div>
+            <MetricValueDisplay
+              value={highlight.value}
+              className="text-2xl font-semibold tracking-tight text-foreground tabular-nums"
+            />
+            {highlight.sub && (
+              <p className="mt-1 text-xs text-muted-foreground">{highlight.sub}</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {tiles.map((tile) => (
-        <div
+        <Card
           key={tile.label}
-          className="flex flex-col gap-2 rounded-2xl border bg-card px-4 py-3 transition-transform duration-300 ease-out hover:-translate-y-0.5"
+          className="rounded-2xl transition-transform duration-300 ease-out hover:-translate-y-0.5"
         >
-          <span className="text-xs text-muted-foreground">{tile.label}</span>
-          <MetricValueDisplay value={tile.value} className="text-sm font-semibold tabular-nums" />
-          {tile.sub && (
-            <span className="text-[11px] text-muted-foreground">{tile.sub}</span>
-          )}
-        </div>
+          <CardContent className="flex flex-col gap-2">
+            <span className="text-xs text-muted-foreground">{tile.label}</span>
+            <MetricValueDisplay value={tile.value} className="text-sm font-semibold tabular-nums" />
+            {tile.sub && (
+              <span className="text-[11px] text-muted-foreground">{tile.sub}</span>
+            )}
+          </CardContent>
+        </Card>
       ))}
     </div>
   )
@@ -336,8 +341,8 @@ function PeerTable({ data }: { data: CompanyAnalysisData }) {
 function CompanyProfileCard({ data }: { data: CompanyAnalysisData }) {
   const { profile } = data
   return (
-    <div className="rounded-2xl border bg-card p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <Card className="rounded-2xl">
+      <CardContent className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <BuildingIcon className="size-4 text-muted-foreground" />
@@ -358,17 +363,17 @@ function CompanyProfileCard({ data }: { data: CompanyAnalysisData }) {
             Website
           </a>
         )}
-      </div>
+      </CardContent>
       {profile.indices.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <CardContent className="flex flex-wrap gap-1.5">
           {profile.indices.map((index) => (
             <Badge key={index} variant="secondary" className="text-[11px]">
               {index}
             </Badge>
           ))}
-        </div>
+        </CardContent>
       )}
-    </div>
+    </Card>
   )
 }
 
@@ -478,7 +483,6 @@ function TabTrigger({
       className={cn(
         "after:opacity-0! active:scale-[0.97] rounded-md transition-colors",
         "hover:bg-foreground/5 dark:hover:bg-foreground/10",
-        "data-active:text-emerald-600! dark:data-active:text-emerald-400!",
         className
       )}
     >
@@ -486,7 +490,7 @@ function TabTrigger({
       {isActive && (
         <motion.span
           layoutId="company-tabs-underline"
-          className="absolute inset-x-1.5 -bottom-2 h-0.5 rounded-full bg-emerald-500 dark:bg-emerald-400"
+          className="absolute inset-x-1.5 -bottom-2 h-0.5 rounded-full bg-foreground"
           transition={SPRING}
         />
       )}
@@ -574,9 +578,9 @@ export function CompanyAnalysisTabs({
         {isRefreshing && (
           <div
             aria-hidden
-            className="absolute inset-x-0 -bottom-px h-0.5 overflow-hidden bg-emerald-500/10"
+            className="absolute inset-x-0 -bottom-px h-0.5 overflow-hidden bg-foreground/10"
           >
-            <div className="h-full w-1/3 bg-emerald-500 motion-safe:animate-[refresh-sweep_1.1s_ease-in-out_infinite] dark:bg-emerald-400" />
+            <div className="h-full w-1/3 bg-foreground motion-safe:animate-[refresh-sweep_1.1s_ease-in-out_infinite]" />
           </div>
         )}
       </div>
