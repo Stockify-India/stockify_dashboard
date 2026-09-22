@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react"
 import {
   AlertTriangleIcon,
   BuildingIcon,
-  FileTextIcon,
   GlobeIcon,
   SearchIcon,
   UsersIcon,
@@ -29,6 +28,8 @@ import { AnimatedNumber, AnimatedRange } from "@/components/company-analysis/ani
 import { MetricCategoryGrid } from "@/components/company-analysis/company-metrics"
 import { AnalysisPanel } from "@/components/company-analysis/analysis-panel"
 import { ShareholdingPanel } from "@/components/company-analysis/shareholding"
+import { ManagementPanel } from "@/components/company-analysis/management-hierarchy"
+import { DocumentsPanel } from "@/components/company-analysis/documents-panel"
 import { buildMetricCategories } from "@/lib/financial-metrics"
 import {
   AnnualPbtTaxSplitChart,
@@ -454,6 +455,7 @@ function RatiosPanel({ data }: { data: CompanyAnalysisData }) {
 
 const SECTION_TABS = [
   { value: "overview", label: "Overview" },
+  { value: "management", label: "Management" },
   { value: "chart", label: "Chart" },
   { value: "analysis", label: "Analysis" },
   { value: "peers", label: "Peers" },
@@ -639,6 +641,12 @@ function CompanyPanels({ data }: { data: CompanyAnalysisData }) {
       <TabsContent value="overview">
         <PanelReveal>
           <OverviewPanel data={data} />
+        </PanelReveal>
+      </TabsContent>
+
+      <TabsContent value="management">
+        <PanelReveal>
+          <ManagementPanel hierarchy={data.management} />
         </PanelReveal>
       </TabsContent>
 
@@ -839,17 +847,13 @@ function CompanyPanels({ data }: { data: CompanyAnalysisData }) {
 
       <TabsContent value="investors">
         <PanelReveal>
-          <ShareholdingPanel />
+          <ShareholdingPanel history={data.shareholding} />
         </PanelReveal>
       </TabsContent>
 
       <TabsContent value="documents">
         <PanelReveal>
-          <EmptyPanel
-            icon={FileTextIcon}
-            title="No documents available"
-            description="Announcements and filings for this company haven't been synced from the exchange yet."
-          />
+          <DocumentsPanel groups={data.documents} />
         </PanelReveal>
       </TabsContent>
     </>
