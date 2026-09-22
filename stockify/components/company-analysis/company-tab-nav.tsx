@@ -71,7 +71,7 @@ function staggerDelay(index: number) {
   return { animationDelay: `${index * 40}ms` }
 }
 
-function EmptyPanel({
+export function EmptyPanel({
   icon: Icon,
   title,
   description,
