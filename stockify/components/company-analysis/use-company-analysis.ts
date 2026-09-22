@@ -14,6 +14,9 @@ import {
 } from "@/lib/company-data"
 import { fetchRawFinancials, type RawAnnualLine } from "@/lib/financial-metrics"
 import { fetchCompanyAnalysis, type AnalysisRecord } from "@/lib/analysis-data"
+import { fetchManagementHierarchy, type ManagementHierarchy } from "@/lib/management"
+import { fetchShareholdingHistory, type ShareholdingHistory } from "@/lib/shareholding"
+import { fetchDocuments, type DocumentGroup } from "@/lib/documents"
 import type { Company } from "@/lib/companies"
 
 type CompanyProfile = Awaited<ReturnType<typeof fetchCompanyProfile>>
@@ -25,6 +28,9 @@ export type CompanyAnalysisData = {
   quarterly: QuarterlyResult[]
   rawFinancials: RawAnnualLine[]
   companyAnalysis: AnalysisRecord | null
+  management: ManagementHierarchy
+  shareholding: ShareholdingHistory
+  documents: DocumentGroup[]
   peers: Company[]
   peerSnapshots: Map<string, AnnualFinancials>
 }
@@ -55,15 +61,27 @@ export function useCompanyAnalysis(symbol: string | null): State {
         setState({ status: "loading" })
       }
 
-      const [profile, priceStats, annual, quarterly, rawFinancials, companyAnalysis] =
-        await Promise.all([
-          fetchCompanyProfile(activeSymbol),
-          fetchPriceStats(activeSymbol),
-          fetchAnnualFinancials(activeSymbol),
-          fetchQuarterlyResults(activeSymbol, 28),
-          fetchRawFinancials(activeSymbol),
-          fetchCompanyAnalysis(activeSymbol),
-        ])
+      const [
+        profile,
+        priceStats,
+        annual,
+        quarterly,
+        rawFinancials,
+        companyAnalysis,
+        management,
+        shareholding,
+        documents,
+      ] = await Promise.all([
+        fetchCompanyProfile(activeSymbol),
+        fetchPriceStats(activeSymbol),
+        fetchAnnualFinancials(activeSymbol),
+        fetchQuarterlyResults(activeSymbol, 28),
+        fetchRawFinancials(activeSymbol),
+        fetchCompanyAnalysis(activeSymbol),
+        fetchManagementHierarchy(activeSymbol),
+        fetchShareholdingHistory(activeSymbol),
+        fetchDocuments(activeSymbol),
+      ])
 
       const peers = await fetchPeers(profile.industry, activeSymbol)
       const peerSnapshots = await fetchPeerSnapshots(peers.map((p) => p.symbol))
@@ -76,6 +94,9 @@ export function useCompanyAnalysis(symbol: string | null): State {
         quarterly,
         rawFinancials,
         companyAnalysis,
+        management,
+        shareholding,
+        documents,
         peers,
         peerSnapshots,
       }
