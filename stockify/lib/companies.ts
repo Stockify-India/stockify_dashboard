@@ -25,6 +25,7 @@ type CorporateInfo = {
 export type CompanyRow = {
   symbol: string
   corporate_info: CorporateInfo | null
+  fetched_at: string | null
 }
 
 function toCompany(row: CompanyRow): Company {
@@ -41,7 +42,7 @@ let cachedCompanies: Promise<{ companies: Company[]; rows: CompanyRow[] }> | nul
 async function loadCompanies() {
   const { data, error } = await supabase
     .from("companies")
-    .select("symbol, corporate_info")
+    .select("symbol, corporate_info, fetched_at")
     .order("symbol")
 
   if (error) throw error
@@ -85,4 +86,34 @@ export async function fetchPeers(industry: string, excludeSymbol: string, limit 
   return companies
     .filter((c) => c.industry === industry && c.symbol !== excludeSymbol)
     .slice(0, limit)
+}
+
+export type Director = {
+  name: string
+  designation: string
+}
+
+// Exchange filings paste titles directly onto names with no separating
+// space ("Mr.Gautam S. Adani", " JatinJalundhwala") — strip the honorific,
+// not the name itself, so we don't guess at word boundaries we can't verify.
+function cleanDirectorName(raw: string | undefined): string {
+  if (!raw) return ""
+  return raw
+    .replace(/^(Mrs|Mr|Ms|Dr)\.?\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+export async function fetchDirectors(symbol: string): Promise<{ directors: Director[]; asOf: string | null }> {
+  if (!cachedCompanies) cachedCompanies = loadCompanies()
+  const { rows } = await cachedCompanies
+  const row = rows.find((r) => r.symbol === symbol)
+  const directors = (row?.corporate_info?.Directors ?? [])
+    .map((d) => ({
+      name: cleanDirectorName(d.Director_Name),
+      designation: d.Designation?.trim() || "Director",
+    }))
+    .filter((d) => d.name.length > 0)
+
+  return { directors, asOf: row?.fetched_at ?? null }
 }

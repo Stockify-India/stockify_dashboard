@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react"
 import {
   AlertTriangleIcon,
   BuildingIcon,
-  FileTextIcon,
   GlobeIcon,
   SearchIcon,
   UsersIcon,
@@ -29,6 +28,8 @@ import { AnimatedNumber, AnimatedRange } from "@/components/company-analysis/ani
 import { MetricCategoryGrid } from "@/components/company-analysis/company-metrics"
 import { AnalysisPanel } from "@/components/company-analysis/analysis-panel"
 import { ShareholdingPanel } from "@/components/company-analysis/shareholding"
+import { ManagementPanel } from "@/components/company-analysis/management-hierarchy"
+import { DocumentsPanel } from "@/components/company-analysis/documents-panel"
 import { buildMetricCategories } from "@/lib/financial-metrics"
 import {
   AnnualPbtTaxSplitChart,
@@ -71,7 +72,7 @@ function staggerDelay(index: number) {
   return { animationDelay: `${index * 40}ms` }
 }
 
-function EmptyPanel({
+export function EmptyPanel({
   icon: Icon,
   title,
   description,
@@ -128,40 +129,80 @@ function MetricValueDisplay({ value, className }: { value: MetricValue; classNam
   return <span className={className}>{value.value}</span>
 }
 
-function MetricBento({
-  highlight,
-  tiles,
+// A full-width strip rather than a 2x2 bento cell — the old highlight tile
+// left its bottom half empty because a single number has nothing to fill a
+// square with. A range earns a bar; the low/high numbers anchor its ends the
+// same way RangeBar does on the Chart tab, just without RangeBar's rose/
+// emerald tint, since this tab was deliberately stripped of accent color.
+function RangeHero({
+  label,
+  sub,
+  low,
+  high,
+  format,
 }: {
-  highlight: MetricTile
-  tiles: MetricTile[]
+  label: string
+  sub?: string
+  low: number | null
+  high: number | null
+  format: (n: number) => string
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:[grid-auto-flow:dense]">
-      <Card className="col-span-2 row-span-2 h-full rounded-2xl bg-foreground/[0.03] dark:bg-foreground/[0.06]">
-        <CardContent className="flex h-full flex-col justify-between gap-3">
-          <span className="text-xs font-medium text-muted-foreground">
-            {highlight.label}
-          </span>
-          <div>
-            <MetricValueDisplay
-              value={highlight.value}
-              className="text-2xl font-semibold tracking-tight text-foreground tabular-nums"
+    <Card className="rounded-2xl bg-foreground/[0.03] dark:bg-foreground/[0.06]">
+      <CardContent className="flex flex-col gap-4">
+        <div>
+          <span className="text-xs font-medium text-muted-foreground">{label}</span>
+          {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
+        </div>
+        {low === null || high === null ? (
+          <span className="text-sm text-muted-foreground">Not available</span>
+        ) : (
+          <div className="flex items-center gap-4">
+            <AnimatedNumber
+              value={low}
+              format={format}
+              className="shrink-0 text-lg font-semibold tracking-tight tabular-nums sm:text-xl"
             />
-            {highlight.sub && (
-              <p className="mt-1 text-xs text-muted-foreground">{highlight.sub}</p>
-            )}
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <motion.div
+                className="h-full w-full origin-left rounded-full bg-foreground/25"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </div>
+            <AnimatedNumber
+              value={high}
+              format={format}
+              className="shrink-0 text-lg font-semibold tracking-tight tabular-nums sm:text-xl"
+            />
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
 
-      {tiles.map((tile) => (
+// 6 tiles over 2 (mobile) or 3 (desktop) columns divides evenly at every
+// breakpoint, so there's never an empty trailing cell to explain away.
+function MetricTileGrid({ tiles }: { tiles: MetricTile[] }) {
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {tiles.map((tile, index) => (
         <Card
           key={tile.label}
-          className="rounded-2xl transition-transform duration-300 ease-out hover:-translate-y-0.5"
+          className={cn(
+            "rounded-2xl transition-transform duration-200 ease-out hover:-translate-y-0.5",
+            STAGGER_ITEM
+          )}
+          style={staggerDelay(index)}
         >
           <CardContent className="flex flex-col gap-2">
             <span className="text-xs text-muted-foreground">{tile.label}</span>
-            <MetricValueDisplay value={tile.value} className="text-sm font-semibold tabular-nums" />
+            <MetricValueDisplay
+              value={tile.value}
+              className="text-lg font-semibold tracking-tight tabular-nums sm:text-xl"
+            />
             {tile.sub && (
               <span className="text-[11px] text-muted-foreground">{tile.sub}</span>
             )}
@@ -393,12 +434,14 @@ function OverviewPanel({ data }: { data: CompanyAnalysisData }) {
   return (
     <div className="flex flex-col gap-6">
       <CompanyProfileCard data={data} />
-      <MetricBento
-        highlight={{
-          label: "52-Week Range",
-          value: { kind: "range", low: priceStats.week52Low, high: priceStats.week52High, format: formatRupee },
-          sub: "Low to high, trailing 52 weeks",
-        }}
+      <RangeHero
+        label="52-Week Range"
+        sub="Low to high, trailing 52 weeks"
+        low={priceStats.week52Low}
+        high={priceStats.week52High}
+        format={formatRupee}
+      />
+      <MetricTileGrid
         tiles={[
           {
             label: "All-Time High",
@@ -454,6 +497,7 @@ function RatiosPanel({ data }: { data: CompanyAnalysisData }) {
 
 const SECTION_TABS = [
   { value: "overview", label: "Overview" },
+  { value: "management", label: "Management" },
   { value: "chart", label: "Chart" },
   { value: "analysis", label: "Analysis" },
   { value: "peers", label: "Peers" },
@@ -639,6 +683,12 @@ function CompanyPanels({ data }: { data: CompanyAnalysisData }) {
       <TabsContent value="overview">
         <PanelReveal>
           <OverviewPanel data={data} />
+        </PanelReveal>
+      </TabsContent>
+
+      <TabsContent value="management">
+        <PanelReveal>
+          <ManagementPanel hierarchy={data.management} />
         </PanelReveal>
       </TabsContent>
 
@@ -839,17 +889,13 @@ function CompanyPanels({ data }: { data: CompanyAnalysisData }) {
 
       <TabsContent value="investors">
         <PanelReveal>
-          <ShareholdingPanel />
+          <ShareholdingPanel history={data.shareholding} />
         </PanelReveal>
       </TabsContent>
 
       <TabsContent value="documents">
         <PanelReveal>
-          <EmptyPanel
-            icon={FileTextIcon}
-            title="No documents available"
-            description="Announcements and filings for this company haven't been synced from the exchange yet."
-          />
+          <DocumentsPanel groups={data.documents} />
         </PanelReveal>
       </TabsContent>
     </>

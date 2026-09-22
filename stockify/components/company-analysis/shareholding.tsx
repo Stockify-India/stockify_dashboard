@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Area, AreaChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-import { InfoIcon } from "lucide-react"
+import { InfoIcon, UsersIcon } from "lucide-react"
 import { cn } from "cn"
 
 import {
@@ -32,6 +32,8 @@ import {
   SKY,
   VIOLET,
 } from "@/components/company-analysis/company-charts"
+import { EmptyPanel } from "@/components/company-analysis/company-tab-nav"
+import type { ShareholdingCategory, ShareholdingHistory, ShareholdingPoint } from "@/lib/shareholding"
 
 const STAGGER_ITEM =
   "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 fill-mode-backwards duration-300"
@@ -40,68 +42,18 @@ function staggerDelay(index: number) {
   return { animationDelay: `${index * 40}ms` }
 }
 
-// Screener-style shareholding pattern disclosure — hardcoded per the user's
-// pasted figures, since this isn't backed by a synced `shareholding` row yet.
-const PERIODS = [
-  "Sep 2023",
-  "Dec 2023",
-  "Mar 2024",
-  "Jun 2024",
-  "Sep 2024",
-  "Dec 2024",
-  "Mar 2025",
-  "Jun 2025",
-  "Sep 2025",
-  "Dec 2025",
-  "Mar 2026",
-  "Jun 2026",
-] as const
+const CATEGORIES: { key: ShareholdingCategory; label: string; color: string }[] = [
+  { key: "promoters", label: "Promoters", color: EMERALD },
+  { key: "foreign_institutions", label: "FIIs", color: SKY },
+  { key: "domestic_institutions", label: "DIIs", color: VIOLET },
+  { key: "government", label: "Government", color: ROSE },
+  { key: "public", label: "Public", color: AMBER },
+]
 
-const YEARLY_INDICES = PERIODS.reduce<number[]>((acc, period, index) => {
-  if (period.startsWith("Mar")) acc.push(index)
+const shareholdingConfig: ChartConfig = CATEGORIES.reduce<ChartConfig>((acc, cat) => {
+  acc[cat.label] = { label: cat.label, color: cat.color }
   return acc
-}, [])
-
-type Category = "Promoters" | "FIIs" | "DIIs" | "Government" | "Public"
-
-const ROWS: { category: Category; values: number[] }[] = [
-  { category: "Promoters", values: [72.30, 72.41, 71.77, 71.77, 71.77, 71.77, 71.77, 71.77, 71.77, 71.77, 71.77, 71.77] },
-  { category: "FIIs", values: [12.47, 12.46, 12.70, 12.35, 12.66, 12.68, 12.04, 11.48, 10.33, 10.37, 9.66, 9.07] },
-  { category: "DIIs", values: [10.01, 10.03, 10.61, 11.00, 10.86, 10.86, 11.49, 11.95, 12.64, 12.81, 13.34, 13.41] },
-  { category: "Government", values: [0.05, 0.05, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06] },
-  { category: "Public", values: [5.17, 5.03, 4.86, 4.82, 4.66, 4.63, 4.63, 4.77, 5.21, 4.98, 5.16, 5.69] },
-]
-
-const SHAREHOLDERS = [
-  "23,67,003",
-  "23,36,016",
-  "22,03,209",
-  "21,81,391",
-  "20,93,962",
-  "20,75,117",
-  "21,15,093",
-  "21,64,289",
-  "23,88,232",
-  "23,32,275",
-  "24,50,090",
-  "26,05,182",
-]
-
-const shareholdingConfig: ChartConfig = {
-  Promoters: { label: "Promoters", color: EMERALD },
-  FIIs: { label: "FIIs", color: SKY },
-  DIIs: { label: "DIIs", color: VIOLET },
-  Government: { label: "Government", color: ROSE },
-  Public: { label: "Public", color: AMBER },
-}
-
-function buildChartData(indices: number[]) {
-  return indices.map((i) => {
-    const point: Record<string, string | number> = { period: PERIODS[i] }
-    for (const row of ROWS) point[row.category] = row.values[i]
-    return point
-  })
-}
+}, {})
 
 const fiiDiiPromoterConfig: ChartConfig = {
   Promoters: { label: "Promoters", color: EMERALD },
@@ -109,20 +61,32 @@ const fiiDiiPromoterConfig: ChartConfig = {
   DIIs: { label: "DIIs", color: VIOLET },
 }
 
-function seriesFor(category: Category) {
-  return ROWS.find((row) => row.category === category)!.values
+function formatShareholders(value: number | null): string {
+  if (value === null) return "—"
+  return value.toLocaleString("en-IN")
+}
+
+function formatPct(value: number | null): string {
+  if (value === null) return "—"
+  return `${value.toFixed(2)}%`
+}
+
+function seriesFor(points: ShareholdingPoint[], key: ShareholdingCategory): number[] {
+  return points.map((p) => p[key] ?? 0)
 }
 
 function domainWithPadding(values: number[], padding: number): [number, number] {
+  if (values.length === 0) return [0, 100]
   return [Math.floor(Math.min(...values) - padding), Math.ceil(Math.max(...values) + padding)]
 }
 
 // Only fires when DII holding genuinely overtakes FII holding somewhere in
 // the window, and the underlying trend is a real decline/rise on both sides
 // — not just a one-quarter wobble.
-function buildFiiDiiCrossoverInsight() {
-  const fii = seriesFor("FIIs")
-  const dii = seriesFor("DIIs")
+function buildFiiDiiCrossoverInsight(points: ShareholdingPoint[]): string | null {
+  const fii = seriesFor(points, "foreign_institutions")
+  const dii = seriesFor(points, "domestic_institutions")
+  if (fii.length < 2) return null
 
   let crossoverIndex: number | null = null
   for (let i = 1; i < fii.length; i++) {
@@ -139,20 +103,24 @@ function buildFiiDiiCrossoverInsight() {
   const diiEnd = dii[dii.length - 1]
   if (fiiEnd >= fiiStart || diiEnd <= diiStart) return null
 
-  return `DII holding overtook FII holding for the first time in this window in ${PERIODS[crossoverIndex]} (DII ${dii[crossoverIndex].toFixed(2)}% vs. FII ${fii[crossoverIndex].toFixed(2)}%). FIIs have fallen from ${fiiStart.toFixed(2)}% to ${fiiEnd.toFixed(2)}% while DIIs rose from ${diiStart.toFixed(2)}% to ${diiEnd.toFixed(2)}% over the same period — a classic "FIIs selling, domestic institutions absorbing" pattern worth tracking as a standing signal.`
+  const period = points[crossoverIndex].quarter
+  return `DII holding overtook FII holding for the first time in this window in ${period} (DII ${dii[crossoverIndex].toFixed(2)}% vs. FII ${fii[crossoverIndex].toFixed(2)}%). FIIs have fallen from ${fiiStart.toFixed(2)}% to ${fiiEnd.toFixed(2)}% while DIIs rose from ${diiStart.toFixed(2)}% to ${diiEnd.toFixed(2)}% over the same period — a classic "FIIs selling, domestic institutions absorbing" pattern worth tracking as a standing signal.`
 }
 
-function FiiDiiPromoterTrendChart() {
-  const data = PERIODS.map((period, i) => ({
-    period,
-    Promoters: ROWS[0].values[i],
-    FIIs: ROWS[1].values[i],
-    DIIs: ROWS[2].values[i],
+function FiiDiiPromoterTrendChart({ points }: { points: ShareholdingPoint[] }) {
+  const data = points.map((p) => ({
+    period: p.quarter,
+    Promoters: p.promoters ?? 0,
+    FIIs: p.foreign_institutions ?? 0,
+    DIIs: p.domestic_institutions ?? 0,
   }))
 
-  const promoterDomain = domainWithPadding(seriesFor("Promoters"), 1)
-  const fiiDiiDomain = domainWithPadding([...seriesFor("FIIs"), ...seriesFor("DIIs")], 1)
-  const insight = buildFiiDiiCrossoverInsight()
+  const promoterDomain = domainWithPadding(seriesFor(points, "promoters"), 1)
+  const fiiDiiDomain = domainWithPadding(
+    [...seriesFor(points, "foreign_institutions"), ...seriesFor(points, "domestic_institutions")],
+    1
+  )
+  const insight = buildFiiDiiCrossoverInsight(points)
 
   return (
     <ChartCard
@@ -215,7 +183,7 @@ function FiiDiiPromoterTrendChart() {
   )
 }
 
-function ShareholdingTable({ indices }: { indices: number[] }) {
+function ShareholdingTable({ points }: { points: ShareholdingPoint[] }) {
   const stickyColClass =
     "sticky left-0 z-10 bg-background shadow-[6px_0_8px_-6px_rgba(0,0,0,0.12)] dark:shadow-[6px_0_8px_-6px_rgba(0,0,0,0.5)]"
 
@@ -225,33 +193,33 @@ function ShareholdingTable({ indices }: { indices: number[] }) {
         <TableHeader>
           <TableRow>
             <TableHead className={cn(stickyColClass, "min-w-[150px]")}>Category</TableHead>
-            {indices.map((i) => (
-              <TableHead key={PERIODS[i]} className="min-w-[84px] text-right font-mono">
-                {PERIODS[i]}
+            {points.map((p) => (
+              <TableHead key={p.quarter} className="min-w-[84px] text-right font-mono">
+                {p.quarter}
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {ROWS.map((row, rowIndex) => (
-            <TableRow key={row.category} className={STAGGER_ITEM} style={staggerDelay(rowIndex)}>
+          {CATEGORIES.map((cat, rowIndex) => (
+            <TableRow key={cat.key} className={STAGGER_ITEM} style={staggerDelay(rowIndex)}>
               <TableCell className={cn(stickyColClass, "font-medium text-foreground/80")}>
-                {row.category}
+                {cat.label}
               </TableCell>
-              {indices.map((i) => (
-                <TableCell key={PERIODS[i]} className="text-right tabular-nums">
-                  {row.values[i].toFixed(2)}%
+              {points.map((p) => (
+                <TableCell key={p.quarter} className="text-right tabular-nums">
+                  {formatPct(p[cat.key])}
                 </TableCell>
               ))}
             </TableRow>
           ))}
-          <TableRow className={STAGGER_ITEM} style={staggerDelay(ROWS.length)}>
+          <TableRow className={STAGGER_ITEM} style={staggerDelay(CATEGORIES.length)}>
             <TableCell className={cn(stickyColClass, "font-medium text-foreground/80")}>
               No. of Shareholders
             </TableCell>
-            {indices.map((i) => (
-              <TableCell key={PERIODS[i]} className="text-right tabular-nums">
-                {SHAREHOLDERS[i]}
+            {points.map((p) => (
+              <TableCell key={p.quarter} className="text-right tabular-nums">
+                {formatShareholders(p.numShareholders)}
               </TableCell>
             ))}
           </TableRow>
@@ -261,15 +229,36 @@ function ShareholdingTable({ indices }: { indices: number[] }) {
   )
 }
 
-export function ShareholdingPanel() {
-  const [view, setView] = useState<"quarterly" | "yearly">("quarterly")
+export function ShareholdingPanel({ history }: { history: ShareholdingHistory }) {
+  const hasQuarterly = history.quarterly.length > 0
+  const hasYearly = history.yearly.length > 0
+  const [view, setView] = useState<"quarterly" | "yearly">(hasQuarterly ? "quarterly" : "yearly")
 
-  const indices = view === "yearly" ? YEARLY_INDICES : PERIODS.map((_, i) => i)
-  const chartData = buildChartData(indices)
+  const points = view === "yearly" ? history.yearly : history.quarterly
+
+  const chartData = useMemo(
+    () =>
+      points.map((p) => {
+        const point: Record<string, string | number> = { period: p.quarter }
+        for (const cat of CATEGORIES) point[cat.label] = p[cat.key] ?? 0
+        return point
+      }),
+    [points]
+  )
+
+  if (!hasQuarterly && !hasYearly) {
+    return (
+      <EmptyPanel
+        icon={UsersIcon}
+        title="No shareholding data"
+        description="Shareholding pattern disclosures haven't been synced from the exchange yet for this company."
+      />
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4">
-      <FiiDiiPromoterTrendChart />
+      <FiiDiiPromoterTrendChart points={points} />
 
       <ChartCard
         title="Shareholding pattern"
@@ -290,23 +279,25 @@ export function ShareholdingPanel() {
                 windows from open-market trades, block deals, or pledges.
               </TooltipContent>
             </Tooltip>
-            <div className="inline-flex shrink-0 rounded-lg border bg-muted/40 p-0.5">
-              {(["quarterly", "yearly"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setView(option)}
-                  className={cn(
-                    "rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors",
-                    view === option
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+            {hasQuarterly && hasYearly && (
+              <div className="inline-flex shrink-0 rounded-lg border bg-muted/40 p-0.5">
+                {(["quarterly", "yearly"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setView(option)}
+                    className={cn(
+                      "rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors",
+                      view === option
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         }
       >
@@ -324,54 +315,26 @@ export function ShareholdingPanel() {
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
-            <Area
-              type="monotone"
-              dataKey="Promoters"
-              stackId="holding"
-              stroke="var(--color-Promoters)"
-              fill="var(--color-Promoters)"
-              fillOpacity={0.75}
-            />
-            <Area
-              type="monotone"
-              dataKey="FIIs"
-              stackId="holding"
-              stroke="var(--color-FIIs)"
-              fill="var(--color-FIIs)"
-              fillOpacity={0.75}
-            />
-            <Area
-              type="monotone"
-              dataKey="DIIs"
-              stackId="holding"
-              stroke="var(--color-DIIs)"
-              fill="var(--color-DIIs)"
-              fillOpacity={0.75}
-            />
-            <Area
-              type="monotone"
-              dataKey="Government"
-              stackId="holding"
-              stroke="var(--color-Government)"
-              fill="var(--color-Government)"
-              fillOpacity={0.75}
-            />
-            <Area
-              type="monotone"
-              dataKey="Public"
-              stackId="holding"
-              stroke="var(--color-Public)"
-              fill="var(--color-Public)"
-              fillOpacity={0.75}
-            />
+            {CATEGORIES.map((cat) => (
+              <Area
+                key={cat.key}
+                type="monotone"
+                dataKey={cat.label}
+                stackId="holding"
+                stroke={`var(--color-${cat.label})`}
+                fill={`var(--color-${cat.label})`}
+                fillOpacity={0.75}
+              />
+            ))}
           </AreaChart>
         </ChartContainer>
       </ChartCard>
 
-      <ShareholdingTable indices={indices} />
+      <ShareholdingTable points={points} />
 
       <p className="px-1 text-xs text-muted-foreground">
-        * The classifications might have changed from Sep&apos;2022 onwards.
+        * Classifications reflect each company&apos;s most recent shareholding disclosure and may
+        change between filing windows.
       </p>
     </div>
   )
