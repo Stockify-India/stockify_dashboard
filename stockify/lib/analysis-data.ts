@@ -86,6 +86,8 @@ export type AnalysisPayload = {
   document_type?: string
   period?: string
   detected_sector?: string
+  detected_sub_sector?: string
+  validation_warnings?: string[]
   business_model?: Record<string, string | null>
   revenue_mix?: {
     sources?: RevenueSource[]
@@ -107,24 +109,11 @@ export type AnalysisPayload = {
   extraction_confidence?: number
 }
 
-export type AnalysisDocument = {
-  success?: boolean
-  document_id?: string
-  analysis: AnalysisPayload
-  detected_document_type?: string
-  total_pages?: number
-  pages_processed?: number
-  sections_found?: string[]
-  errors?: string[]
-  processing_time_seconds?: number
-  created_at?: string
-}
-
 export type AnalysisRecord = {
   id: number
   symbol: string
   documentId: string | null
-  document: AnalysisDocument
+  analysis: AnalysisPayload
   createdAt: string
 }
 
@@ -144,7 +133,7 @@ export async function fetchCompanyAnalysis(symbol: string): Promise<AnalysisReco
     id: data.id,
     symbol: data.symbol,
     documentId: data.document_id ?? null,
-    document: data.data as AnalysisDocument,
+    analysis: data.data as AnalysisPayload,
     createdAt: data.created_at,
   }
 }

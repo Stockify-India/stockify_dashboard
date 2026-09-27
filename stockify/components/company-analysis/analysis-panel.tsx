@@ -353,7 +353,7 @@ function FyRupeeBarChart({
 }
 
 export function AnalysisPanel({ record }: { record: AnalysisRecord }) {
-  const { analysis } = record.document
+  const { analysis } = record
   const business = analysis.business_model ?? {}
   const revenueSources = analysis.revenue_mix?.sources ?? []
   const segments = analysis.segments ?? []
@@ -423,14 +423,15 @@ export function AnalysisPanel({ record }: { record: AnalysisRecord }) {
     .filter(([, v]) => isMeaningful(v))
     .map(([k, v]) => ({ label: humanizeKey(k as string), value: v as string }))
 
-  const hasErrors = (record.document.errors ?? []).length > 0
+  const validationWarnings = analysis.validation_warnings ?? []
 
   return (
     <div className="flex flex-col gap-4">
       {/* Meta strip */}
       <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-background px-3 py-2.5 text-xs text-muted-foreground">
         {analysis.detected_sector && <Badge variant="secondary">{analysis.detected_sector}</Badge>}
-        {analysis.document_type && <span>{humanizeKey(analysis.document_type)}</span>}
+        {analysis.detected_sub_sector && <span>{analysis.detected_sub_sector}</span>}
+        {analysis.document_type && <span>· {humanizeKey(analysis.document_type)}</span>}
         {analysis.period && <span>· {analysis.period}</span>}
         {typeof analysis.extraction_confidence === "number" && (
           <span className="ml-auto inline-flex items-center gap-1">
@@ -572,24 +573,17 @@ export function AnalysisPanel({ record }: { record: AnalysisRecord }) {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-1.5 px-1 text-[11px] text-muted-foreground">
-        <BuildingIcon className="size-3" />
-        Extracted from {record.document.pages_processed ?? "—"} of {record.document.total_pages ?? "—"} pages
-        {record.document.sections_found && record.document.sections_found.length > 0 && (
-          <span>· {record.document.sections_found.map(humanizeKey).join(", ")}</span>
-        )}
-        {hasErrors && (
-          <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
-            <AlertTriangleIcon className="size-3" /> {record.document.errors!.length} extraction warning
-            {record.document.errors!.length > 1 ? "s" : ""}
-          </span>
-        )}
-      </div>
-
-      {hasErrors && (
-        <InsightNote>
-          Some sections couldn&apos;t be fully extracted: {record.document.errors!.join(" ")}
-        </InsightNote>
+      {validationWarnings.length > 0 && (
+        <>
+          <div className="flex flex-wrap items-center gap-1.5 px-1 text-[11px] text-muted-foreground">
+            <BuildingIcon className="size-3" />
+            <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+              <AlertTriangleIcon className="size-3" /> {validationWarnings.length} validation warning
+              {validationWarnings.length > 1 ? "s" : ""}
+            </span>
+          </div>
+          <InsightNote>Some figures may not reconcile: {validationWarnings.join(" ")}</InsightNote>
+        </>
       )}
     </div>
   )
