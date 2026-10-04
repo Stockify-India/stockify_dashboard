@@ -138,3 +138,39 @@
     }
   }
 }
+
+/* Agentic chat: content that arrives live fades up a few pixels. Reduced
+   motion keeps the fade and drops the movement. */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes agent-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes agent-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.agent-enter {
+  animation: agent-fade 200ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .agent-enter {
+    animation-name: agent-rise;
+  }
+}
