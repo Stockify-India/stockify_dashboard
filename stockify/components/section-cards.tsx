@@ -1,5 +1,9 @@
 "use client"
 
+import { cn } from "cn"
+import { TrendingDownIcon, TrendingUpIcon } from "lucide-react"
+
+import { REVEAL_CLASS, revealStyle } from "@/components/market/reveal"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -9,103 +13,117 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { TrendingUpIcon, TrendingDownIcon } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  HEADLINE_INDICES,
+  INDICES,
+  formatLevel,
+  type IndexId,
+  type IndexQuote,
+} from "@/lib/market"
+import {
+  formatSignedPercent,
+  formatSignedRupee,
+  pillClass,
+  toneClass,
+} from "@/lib/portfolio"
 
-export function SectionCards() {
+// Signed index points: reuse the rupee formatter without its currency sign.
+function formatPoints(value: number) {
+  return formatSignedRupee(value).replace("₹", "")
+}
+
+export function SectionCards({
+  byId,
+  selected,
+  onSelect,
+}: {
+  byId: Map<IndexId, IndexQuote>
+  selected: IndexId
+  onSelect: (id: IndexId) => void
+}) {
   return (
     <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month{" "}
-            <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>New Customers</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingDownIcon
-              />
-              -20%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period{" "}
-            <TrendingDownIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention{" "}
-            <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +4.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase{" "}
-            <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter>
-      </Card>
+      {HEADLINE_INDICES.map((id, position) => {
+        const def = INDICES.find((i) => i.id === id)!
+        const quote = byId.get(id)
+        const Icon =
+          quote && quote.change < 0 ? TrendingDownIcon : TrendingUpIcon
+        const isSelected = selected === id
+
+        return (
+          <Card
+            key={id}
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
+            aria-label={`Show ${def.name} on the chart`}
+            onClick={() => onSelect(id)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault()
+                onSelect(id)
+              }
+            }}
+            style={revealStyle(position + 1)}
+            className={cn(
+              "@container/card cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              REVEAL_CLASS,
+              // Press feedback only. The entrance owns transform while it runs
+              // (fill-mode-backwards releases it afterwards), so active scale works.
+              "[transition:box-shadow_150ms_ease,transform_120ms_cubic-bezier(0.23,1,0.32,1)] active:scale-[0.985] motion-reduce:active:scale-100",
+              isSelected && "ring-2 ring-primary/60"
+            )}
+          >
+            <CardHeader>
+              <CardDescription>{def.name}</CardDescription>
+              {quote ? (
+                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                  {formatLevel(quote.level)}
+                </CardTitle>
+              ) : (
+                <Skeleton className="h-8 w-36" />
+              )}
+              <CardAction>
+                {quote ? (
+                  <Badge
+                    variant="outline"
+                    className={cn("tabular-nums", pillClass(quote.change))}
+                  >
+                    <Icon />
+                    {formatSignedPercent(quote.changePct)}
+                  </Badge>
+                ) : (
+                  <Skeleton className="h-5 w-16" />
+                )}
+              </CardAction>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              {quote ? (
+                <>
+                  <div
+                    className={cn(
+                      "flex gap-2 font-medium tabular-nums",
+                      toneClass(quote.change)
+                    )}
+                  >
+                    {formatPoints(quote.change)} points today
+                    <Icon className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground tabular-nums">
+                    Previous close {formatLevel(quote.previousClose)}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-4 w-32" />
+                </>
+              )}
+            </CardFooter>
+          </Card>
+        )
+      })}
     </div>
   )
 }

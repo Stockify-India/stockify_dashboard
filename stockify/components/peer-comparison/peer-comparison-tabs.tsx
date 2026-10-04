@@ -8,6 +8,7 @@ import { cn } from "cn"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EmptyPanel } from "@/components/company-analysis/company-tab-nav"
 import { ComparisonChartsPanel } from "@/components/peer-comparison/comparison/comparison-panel"
+import { AgenticPanel } from "@/components/peer-comparison/agentic/agentic-panel"
 import { StockPicker } from "@/components/peer-comparison/stock-picker"
 import { WeightagePanel } from "@/components/peer-comparison/weightage/weightage-panel"
 import type { Company } from "@/lib/companies"
@@ -146,6 +147,9 @@ function ComparisonPanel({
   const showWeightage = isWeightage && needed === 0
   const showComparison = isComparison && needed === 0
   const reduceMotion = useReducedMotion()
+
+  // The agentic tab manages its stocks per session, so it has no shared picker.
+  if (tab.value === "agentic") return <AgenticPanel />
 
   return (
     <div className="flex flex-col gap-6">
